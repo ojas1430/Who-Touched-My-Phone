@@ -55,11 +55,10 @@ fun DashboardScreen() {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                // 🔥 THIS is the key change
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.7f) // 👈 takes 70% of screen
+                        .weight(0.7f)
                 ) {
 
                     ProtectedCard()
