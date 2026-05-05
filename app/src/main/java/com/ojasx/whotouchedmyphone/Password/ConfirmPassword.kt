@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -25,23 +26,31 @@ import androidx.compose.ui.unit.dp
 import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
 import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
 import com.ojasx.whotouchedmyphone.R
+import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
-@Preview
 @Composable
-fun ConfirmPassword() {
+fun ConfirmPassword(
+    pinViewModel: PinViewModel,
+    onSuccess:()->Unit
+) {
+
+    val bgBrush = remember {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF0B0E17),
+                Color(0xFF111528),
+                Color(0xFF0B0E17)
+            )
+        )
+    }
+    val pin = pinViewModel.pin.value
+    val error = pinViewModel.error.value
+
     Column(
         modifier = Modifier.fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0B0E17),
-                        Color(0xFF111528),
-                        Color(0xFF0B0E17)
-                    )
-                ))
+            .background(bgBrush)
     ) {
 
-        // Top content (60%)
         Box(
             modifier = Modifier
                 .weight(0.6f)
@@ -77,8 +86,15 @@ fun ConfirmPassword() {
                 )
                 Spacer(Modifier.height(20.dp))
                 PinDots(
-                    pinLength = 2
+                    pinLength = pin.length
                 )
+                if (error.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = error,
+                        color = Color.Red
+                    )
+                }
             }
         }
 
@@ -87,9 +103,15 @@ fun ConfirmPassword() {
             modifier = Modifier
                 .weight(0.4f)
                 .fillMaxWidth(),
-            onNumberClick = {},
-            onDeleteClick = {},
-            onConfirmClick = {}
+            onNumberClick = { pinViewModel.onNumberClick(it) },
+
+            onDeleteClick = { pinViewModel.onDeleteClick() },
+
+            onConfirmClick = {
+                pinViewModel.onConfirmPinClick {
+                    onSuccess()
+
+                }}
         )
         Spacer(Modifier.height(20.dp))
     }

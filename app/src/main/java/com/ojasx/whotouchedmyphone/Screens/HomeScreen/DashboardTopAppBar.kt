@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -37,15 +38,8 @@ fun DashboardTopBar() {
         modifier = Modifier
             .fillMaxWidth()
             .statusBarsPadding()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0B0E17),
-                        Color(0xFF111528),
-                        Color(0xFF0B0E17)
-                    )
-                )
-            )            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .background(Color(0xFF0F1322))
+            .padding(horizontal = 16.dp, vertical = 8.dp)
         ,
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically

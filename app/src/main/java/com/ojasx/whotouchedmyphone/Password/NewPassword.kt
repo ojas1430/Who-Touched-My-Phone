@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -25,21 +27,37 @@ import androidx.compose.ui.unit.dp
 import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
 import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
 import com.ojasx.whotouchedmyphone.R
+import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
-@Preview
 @Composable
-fun NewPassword() {
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                colors = listOf(
-                    Color(0xFF0B0E17),
-                    Color(0xFF111528),
-                    Color(0xFF0B0E17)
-                )
-            ))
-    ) {
+fun NewPassword(
+    pinViewModel: PinViewModel,
+    onPinSet:()->Unit
+) {
+    val isDone = pinViewModel.isFirstStepDone.value
+    val bgBrush = remember {
+        Brush.verticalGradient(
+            listOf(
+                Color(0xFF0B0E17),
+                Color(0xFF111528),
+                Color(0xFF0B0E17)
+            )
+        )
+    }
+
+    LaunchedEffect(isDone) {
+        if (isDone) {
+            onPinSet()
+        }
+    }
+
+        val pin = pinViewModel.pin.value
+        val error = pinViewModel.error.value
+
+        Column(
+            modifier = Modifier.fillMaxSize()
+                .background(bgBrush)
+        ) {
 
         // Top content (60%)
         Box(
@@ -77,8 +95,15 @@ fun NewPassword() {
                 )
                 Spacer(Modifier.height(20.dp))
                 PinDots(
-                    pinLength = 2
+                    pinLength = pin.length
                 )
+                if (error.isNotEmpty()) {
+                    Spacer(Modifier.height(8.dp))
+                    Text(
+                        text = error,
+                        color = Color.Red
+                    )
+                }
             }
         }
 
@@ -87,9 +112,17 @@ fun NewPassword() {
             modifier = Modifier
                 .weight(0.4f)
                 .fillMaxWidth(),
-            onNumberClick = {},
-            onDeleteClick = {},
-            onConfirmClick = {}
+            onNumberClick = { number ->
+                pinViewModel.onNumberClick(number)
+            },
+
+            onDeleteClick = {
+                pinViewModel.onDeleteClick()
+            },
+
+            onConfirmClick = {
+                pinViewModel.onSetPinClick()
+            }
         )
         Spacer(Modifier.height(20.dp))
     }

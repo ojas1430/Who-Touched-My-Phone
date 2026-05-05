@@ -123,10 +123,10 @@ fun GlassBarItem(
                     modifier = Modifier
                         .size(42.dp)
                         .background(
-                            brush = Brush.radialGradient(
+                            Brush.radialGradient(
                                 colors = listOf(
                                     Color(0xFF9C6BFF).copy(alpha = 0.5f),
-                                    Color.Transparent
+                                    Color(0xFF9C6BFF).copy(alpha = 0.01f)
                                 )
                             ),
                             shape = CircleShape

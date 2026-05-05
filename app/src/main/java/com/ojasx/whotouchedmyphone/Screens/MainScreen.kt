@@ -12,13 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.ojasx.whotouchedmyphone.Screens.HomeScreen.DashboardScreen
 import com.ojasx.whotouchedmyphone.Screens.Logs.LogsScreen
 import com.ojasx.whotouchedmyphone.Screens.Settings.SettingsScreen
 
-@Preview
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
 
     var selectedIndex by remember { mutableStateOf(0) }
 
