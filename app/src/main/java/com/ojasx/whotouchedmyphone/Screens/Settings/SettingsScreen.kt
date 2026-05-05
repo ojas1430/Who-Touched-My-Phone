@@ -1,0 +1,9 @@
+package com.ojasx.whotouchedmyphone.Screens.Settings
+
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+
+@Composable
+fun SettingsScreen() {
+
+}
