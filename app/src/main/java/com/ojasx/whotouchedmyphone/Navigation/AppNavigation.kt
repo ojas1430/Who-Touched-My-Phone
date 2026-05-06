@@ -38,7 +38,7 @@ fun AppNavigation() {
         composable("NewPassword") {
             NewPassword(
                 pinViewModel = pinViewModel,
-                onNext = {                     // Changed to onNext
+                onNext = {
                     navController.navigate("ConfirmPassword")
                 }
             )
@@ -47,12 +47,14 @@ fun AppNavigation() {
         composable("ConfirmPassword") {
             ConfirmPassword(
                 pinViewModel = pinViewModel,
-                onSuccess = {                     // ← Must match parameter name
+                onSuccess = {
                     navController.navigate("MainScreen") {
                         popUpTo("NewPassword") { inclusive = true }
-                        // Optional: clear back stack more
-                        // popUpTo(0) { saveState = false }
+
                     }
+                },
+                onMismatch = {
+                    navController.popBackStack()
                 }
             )
         }

@@ -48,7 +48,10 @@ class PinViewModel(private val repository: PinRepository) : ViewModel() {
         _error.value = ""
     }
 
-    fun onConfirmPinClick(onSuccess: () -> Unit) {
+    fun onConfirmPinClick(
+        onSuccess: () -> Unit,
+        onMismatch: () -> Unit
+    ) {
         if (_pin.value.length != 4) {
             _error.value = "Enter 4 digit PIN"
             return
@@ -57,11 +60,16 @@ class PinViewModel(private val repository: PinRepository) : ViewModel() {
         if (_pin.value != firstPin) {
             _error.value = "PIN does not match"
             _pin.value = ""
+
+            firstPin = null
+            _isFirstStepDone.value = false
+            onMismatch()
             return
+
+
         }
 
-        // Store in Room DB
-        _isLoading.value = true
+        _isLoading.value = false
         _error.value = ""
 
         viewModelScope.launch {
@@ -73,24 +81,12 @@ class PinViewModel(private val repository: PinRepository) : ViewModel() {
                 onSuccess()
             } catch (e: Exception) {
                 _error.value = "Failed to save PIN. Please try again."
-                // Do not clear firstPin so user can retry confirmation
             } finally {
                 _isLoading.value = false
             }
         }
     }
-
-    fun resetFirstStep() {
-        _isFirstStepDone.value = false
-        _pin.value = ""
-        _error.value = ""
-    }
-
-    // Optional: Clear everything
-    fun resetAll() {
-        _pin.value = ""
-        firstPin = null
-        _isFirstStepDone.value = false
+    fun clearError() {
         _error.value = ""
     }
 }

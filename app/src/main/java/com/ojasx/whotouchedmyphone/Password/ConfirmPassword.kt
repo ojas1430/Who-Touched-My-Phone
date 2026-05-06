@@ -32,7 +32,8 @@ import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 @Composable
 fun ConfirmPassword(
     pinViewModel: PinViewModel,
-    onSuccess: () -> Unit          // ← Must be onSuccess
+    onSuccess: () -> Unit,
+    onMismatch: () -> Unit
 ) {
 
     val bgBrush = remember {
@@ -43,11 +44,9 @@ fun ConfirmPassword(
 
     val pin = pinViewModel.pin.value
     val error = pinViewModel.error.value
-    val isLoading = pinViewModel.isLoading.value   // if you added this in ViewModel
+    val isLoading = pinViewModel.isLoading.value
 
-    // Auto navigate when PIN is successfully saved
     LaunchedEffect(isLoading) {
-        // Optional: You can also observe a success state if needed
     }
 
     Column(
@@ -119,7 +118,10 @@ fun ConfirmPassword(
 
             onConfirmClick = {
                 if (!pinViewModel.isLoading.value) {
-                    pinViewModel.onConfirmPinClick(onSuccess)   // ← Important
+                    pinViewModel.onConfirmPinClick(
+                        onSuccess,
+                        onMismatch
+                    )
                 }
             }
         )
