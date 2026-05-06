@@ -22,7 +22,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
 import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
@@ -32,9 +31,9 @@ import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 @Composable
 fun NewPassword(
     pinViewModel: PinViewModel,
-    onPinSet:()->Unit
+    onNext: () -> Unit
 ) {
-    val isDone = pinViewModel.isFirstStepDone.value
+
     val bgBrush = remember {
         Brush.verticalGradient(
             listOf(
@@ -45,29 +44,33 @@ fun NewPassword(
         )
     }
 
-    LaunchedEffect(isDone) {
-        if (isDone) {
-            onPinSet()
+    val pin = pinViewModel.pin.value
+    val error = pinViewModel.error.value
+    val isFirstStepDone = pinViewModel.isFirstStepDone.value
+
+    // Auto navigate to Confirm screen when first PIN is set
+    LaunchedEffect(isFirstStepDone) {
+        if (isFirstStepDone) {
+            onNext()
         }
     }
 
-        val pin = pinViewModel.pin.value
-        val error = pinViewModel.error.value
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(bgBrush)
+    ) {
 
-        Column(
-            modifier = Modifier.fillMaxSize()
-                .background(bgBrush)
-        ) {
-
-        // Top content (60%)
         Box(
             modifier = Modifier
                 .weight(0.6f)
                 .fillMaxWidth(),
             contentAlignment = Alignment.Center
         ) {
+
             Column(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
                     .padding(horizontal = 8.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -77,54 +80,50 @@ fun NewPassword(
                     painter = painterResource(id = R.drawable.firstlock),
                     contentDescription = null
                 )
+
                 Text(
                     "Secure Your Phone",
                     color = Color.White,
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.Bold
-
                 )
+
                 Spacer(Modifier.height(20.dp))
+
                 Text(
                     "Set a 4 digit PIN to protect your phone and catch intruders.",
                     color = Color.White,
                     style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center   ,
-                    modifier = Modifier
-                        .fillMaxWidth(0.8f)
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth(0.8f)
                 )
+
                 Spacer(Modifier.height(20.dp))
-                PinDots(
-                    pinLength = pin.length
-                )
+
+                PinDots(pinLength = pin.length)
+
                 if (error.isNotEmpty()) {
                     Spacer(Modifier.height(8.dp))
-                    Text(
-                        text = error,
-                        color = Color.Red
-                    )
+                    Text(text = error, color = Color.Red)
                 }
             }
         }
 
-        // Bottom NumberPad (40%)
         NumberPad(
             modifier = Modifier
                 .weight(0.4f)
                 .fillMaxWidth(),
-            onNumberClick = { number ->
-                pinViewModel.onNumberClick(number)
-            },
 
-            onDeleteClick = {
-                pinViewModel.onDeleteClick()
-            },
+            onNumberClick = { pinViewModel.onNumberClick(it) },
+            onDeleteClick = { pinViewModel.onDeleteClick() },
 
             onConfirmClick = {
-                pinViewModel.onSetPinClick()
+                if (!pinViewModel.isFirstStepDone.value) {
+                    pinViewModel.onSetPinClick()
+                }
             }
         )
+
         Spacer(Modifier.height(20.dp))
     }
 }
-

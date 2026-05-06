@@ -46,14 +46,14 @@ fun NumberPad(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 row.forEach { number ->
-                    NumberButton(number) {
-                        onNumberClick(number)
-                    }
+                    NumberButton(
+                        number = number,
+                        onClick = { onNumberClick(number) }
+                    )
                 }
             }
         }
 
-        // Last row
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceEvenly
@@ -63,9 +63,10 @@ fun NumberPad(
                 onClick = onDeleteClick
             )
 
-            NumberButton(0) {
-                onNumberClick(0)
-            }
+            NumberButton(
+                number = 0,
+                onClick = { onNumberClick(0) }
+            )
 
             IconButtonCircle(
                 icon = Icons.Default.Check,

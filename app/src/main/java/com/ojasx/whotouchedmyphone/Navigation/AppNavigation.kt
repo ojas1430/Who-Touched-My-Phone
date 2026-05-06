@@ -1,19 +1,34 @@
 package com.ojasx.whotouchedmyphone.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.BlendMode.Companion.Screen
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.*
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.ojasx.whotouchedmyphone.Password.ConfirmPassword
 import com.ojasx.whotouchedmyphone.Password.NewPassword
+import com.ojasx.whotouchedmyphone.RoomDb.AppDatabase
+import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
 import com.ojasx.whotouchedmyphone.Screens.MainScreen
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
+import com.ojasx.whotouchedmyphone.ViewModel.PinViewModelFactory
 
 @Composable
 fun AppNavigation() {
 
     val navController = rememberNavController()
-    val pinViewModel: PinViewModel = viewModel()
+    val context = LocalContext.current
+
+    // Create Database → Repository → Factory → ViewModel
+    val database = AppDatabase.getDatabase(context)
+    val repository = PinRepository(database.pinDao())
+    val factory = PinViewModelFactory(repository)
+
+    val pinViewModel: PinViewModel = viewModel(
+        factory = factory
+    )
 
     NavHost(
         navController = navController,
@@ -21,20 +36,28 @@ fun AppNavigation() {
     ) {
 
         composable("NewPassword") {
-            NewPassword(pinViewModel,
-                onPinSet = {
+            NewPassword(
+                pinViewModel = pinViewModel,
+                onNext = {                     // Changed to onNext
                     navController.navigate("ConfirmPassword")
-                })
+                }
+            )
         }
 
         composable("ConfirmPassword") {
-            ConfirmPassword(pinViewModel,
-                onSuccess = {
-                navController.navigate("MainScreen")
-            })
+            ConfirmPassword(
+                pinViewModel = pinViewModel,
+                onSuccess = {                     // ← Must match parameter name
+                    navController.navigate("MainScreen") {
+                        popUpTo("NewPassword") { inclusive = true }
+                        // Optional: clear back stack more
+                        // popUpTo(0) { saveState = false }
+                    }
+                }
+            )
         }
 
-        composable("MainScreen"){
+        composable("MainScreen") {
             MainScreen(navController)
         }
     }
