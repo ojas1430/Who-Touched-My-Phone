@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.sp
 fun GlassAppItem(
     app: AppInfo,
     isLocked: Boolean,
-    onClick: () -> Unit,
-    onToggleLock: () -> Unit
+    onAppClick: () -> Unit,
+    onLockClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -38,7 +38,11 @@ fun GlassAppItem(
             .clip(RoundedCornerShape(18.dp))
             .background(Color.White.copy(alpha = 0.08f))
             .clickable {
-                onToggleLock()
+                if (isLocked) {
+                onAppClick()
+            } else {
+                onLockClick()
+            }
             }
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -53,7 +57,7 @@ fun GlassAppItem(
 
         Spacer(modifier = Modifier.width(14.dp))
 
-        // App Name only
+        // App Name
         Text(
             text = app.appName,
             color = Color.White,
@@ -62,12 +66,14 @@ fun GlassAppItem(
             modifier = Modifier.weight(1f)
         )
 
-        // Lock Icon (visual only now)
+        // 🔥 ICON STATE CHANGE HERE
         Icon(
             imageVector = if (isLocked) Icons.Default.Lock else Icons.Default.LockOpen,
             contentDescription = null,
-            tint = if (isLocked) Color(0xFFFF5252) else Color(0xFF4CAF50),
-            modifier = Modifier.size(24.dp)
+            tint = if (isLocked) Color(0xFFFF3B30) else Color(0xFF34C759),
+            modifier = Modifier
+                .size(24.dp)
+                .clickable { onLockClick() }
         )
     }
 }

@@ -12,18 +12,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.runtime.*
+import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
 
 
 @Composable
 fun AppListScreen(
+    appLockViewModel: AppLockViewModel,
     onAppClick: (AppInfo) -> Unit
 ) {
     val context = LocalContext.current
-
     val apps = remember { getInstalledApps(context) }
-
-    // lock state per app
-    val lockedApps = remember { mutableStateMapOf<String, Boolean>() }
 
     LazyColumn(
         contentPadding = PaddingValues(12.dp),
@@ -31,14 +29,16 @@ fun AppListScreen(
     ) {
         itemsIndexed(apps) { _, app ->
 
-            val isLocked = lockedApps[app.packageName] ?: false
+            val isLocked = appLockViewModel.isLocked(app.packageName)
 
             GlassAppItem(
                 app = app,
                 isLocked = isLocked,
-                onClick = { onAppClick(app) },
-                onToggleLock = {
-                    lockedApps[app.packageName] = !isLocked
+                onAppClick = {
+                    onAppClick(app)
+                },
+                onLockClick = {
+                    appLockViewModel.toggleLock(app.packageName)
                 }
             )
         }

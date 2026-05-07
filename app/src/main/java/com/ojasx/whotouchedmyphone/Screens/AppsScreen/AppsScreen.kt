@@ -1,24 +1,28 @@
 package com.ojasx.whotouchedmyphone.Screens.AppsScreen
 
-import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.ojasx.whotouchedmyphone.FetchInstalledApps.AppInfo
 import com.ojasx.whotouchedmyphone.FetchInstalledApps.AppListScreen
-import com.ojasx.whotouchedmyphone.Screens.HomeScreen.DashboardTopBar
+import com.ojasx.whotouchedmyphone.Password.LockScreen
+import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
+import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
 @Composable
-fun AppsScreen() {
+fun AppsScreen(
+    appLockViewModel: AppLockViewModel,
+    pinViewModel: PinViewModel
+) {
+
+    var selectedApp by remember { mutableStateOf<AppInfo?>(null) }
+    var showPinScreen by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -32,6 +36,7 @@ fun AppsScreen() {
                 )
             )
     ) {
+
         Scaffold(
             containerColor = Color.Transparent,
             topBar = { AppTopBar() }
@@ -46,13 +51,31 @@ fun AppsScreen() {
             ) {
 
                 AppListScreen(
+                    appLockViewModel = appLockViewModel,
                     onAppClick = { app ->
-                        Log.d("APP_CLICK", app.packageName)
+
+                        if (appLockViewModel.isLocked(app.packageName)) {
+                            selectedApp = app
+                            showPinScreen = true
+                        }
                     }
                 )
-
             }
+        }
 
+        // 🔐 PIN SCREEN OVERLAY
+        if (showPinScreen && selectedApp != null) {
+
+            LockScreen(
+                pinViewModel = pinViewModel,
+                onUnlockSuccess = {
+
+                    appLockViewModel.unlock(selectedApp!!.packageName)
+
+                    showPinScreen = false
+                    selectedApp = null
+                }
+            )
         }
     }
 }

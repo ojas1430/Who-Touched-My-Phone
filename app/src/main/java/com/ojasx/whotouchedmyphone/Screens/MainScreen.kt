@@ -14,9 +14,15 @@ import com.ojasx.whotouchedmyphone.Screens.AppsScreen.AppsScreen
 import com.ojasx.whotouchedmyphone.Screens.HomeScreen.DashboardScreen
 import com.ojasx.whotouchedmyphone.Screens.Logs.LogsScreen
 import com.ojasx.whotouchedmyphone.Screens.Settings.SettingsScreen
+import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
+import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
 @Composable
-fun MainScreen(navController: NavController) {
+fun MainScreen(
+    appLockViewModel: AppLockViewModel,
+    pinViewModel: PinViewModel,
+    navController: NavController
+) {
 
     var selectedIndex by remember { mutableStateOf(0) }
 
@@ -26,7 +32,7 @@ fun MainScreen(navController: NavController) {
             0 -> DashboardScreen()
             1 -> LogsScreen()
             2 -> SettingsScreen()
-            4 -> AppsScreen()
+            4 -> AppsScreen(appLockViewModel, pinViewModel )
         }
 
         // 👇 THIS is what you were missing
