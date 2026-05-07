@@ -86,8 +86,44 @@ class PinViewModel(private val repository: PinRepository) : ViewModel() {
             }
         }
     }
+
+
     fun clearError() {
         _error.value = ""
+    }
+
+
+    fun verifyPin(
+        onSuccess: () -> Unit,
+        onError: () -> Unit
+    ) {
+        if (_pin.value.length != 4) {
+            _error.value = "Enter 4 digit PIN"
+            return
+        }
+
+        _isLoading.value = true
+
+        viewModelScope.launch {
+            try {
+                val isCorrect = repository.verifyPin(_pin.value)
+
+                if (isCorrect) {
+                    _pin.value = ""
+                    _error.value = ""
+                    onSuccess() // 🔓 unlock
+                } else {
+                    _error.value = "Incorrect PIN"
+                    _pin.value = ""
+                    onError()
+                }
+
+            } catch (e: Exception) {
+                _error.value = "Something went wrong"
+            } finally {
+                _isLoading.value = false
+            }
+        }
     }
 }
 

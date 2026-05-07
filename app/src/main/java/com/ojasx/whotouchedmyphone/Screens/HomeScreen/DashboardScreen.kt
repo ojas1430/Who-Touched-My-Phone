@@ -1,5 +1,6 @@
 package com.ojasx.whotouchedmyphone.Screens.HomeScreen
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ojasx.whotouchedmyphone.FetchInstalledApps.AppListScreen
 import com.ojasx.whotouchedmyphone.Screens.HomeScreen.cards.LastIntrusionCard
 import com.ojasx.whotouchedmyphone.Screens.HomeScreen.cards.ProtectedCard
 import com.ojasx.whotouchedmyphone.Screens.HomeScreen.cards.ThisMonthCard

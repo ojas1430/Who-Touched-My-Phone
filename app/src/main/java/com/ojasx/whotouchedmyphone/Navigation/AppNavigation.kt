@@ -16,23 +16,20 @@ import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModelFactory
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(isPinSet: Boolean) {
 
     val navController = rememberNavController()
     val context = LocalContext.current
 
-    // Create Database → Repository → Factory → ViewModel
     val database = AppDatabase.getDatabase(context)
     val repository = PinRepository(database.pinDao())
     val factory = PinViewModelFactory(repository)
 
-    val pinViewModel: PinViewModel = viewModel(
-        factory = factory
-    )
+    val pinViewModel: PinViewModel = viewModel(factory = factory)
 
     NavHost(
         navController = navController,
-        startDestination = "NewPassword"
+        startDestination = if (isPinSet) "home" else "NewPassword"
     ) {
 
         composable("NewPassword") {
@@ -48,9 +45,8 @@ fun AppNavigation() {
             ConfirmPassword(
                 pinViewModel = pinViewModel,
                 onSuccess = {
-                    navController.navigate("MainScreen") {
+                    navController.navigate("home") {
                         popUpTo("NewPassword") { inclusive = true }
-
                     }
                 },
                 onMismatch = {
@@ -59,7 +55,7 @@ fun AppNavigation() {
             )
         }
 
-        composable("MainScreen") {
+        composable("home") {
             MainScreen(navController)
         }
     }

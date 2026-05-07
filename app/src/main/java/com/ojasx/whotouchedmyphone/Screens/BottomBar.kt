@@ -81,6 +81,13 @@ fun BottomBar(
             )
 
             GlassBarItem(
+                icon = R.drawable.playstore,
+                label = "Apps",
+                selected = selectedIndex == 4,
+                onClick = { onItemSelected(4)}
+            )
+
+            GlassBarItem(
                 icon = R.drawable.document,
                 label = "Stats",
                 selected = selectedIndex == 1,

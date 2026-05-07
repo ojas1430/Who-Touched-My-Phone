@@ -18,4 +18,8 @@ class PinRepository(private val dao: PinDao) {
         val stored = dao.getPin() ?: return false
         return stored.pinHash == hashPin(inputPin)
     }
+
+    suspend fun isPinSet(): Boolean {
+        return dao.getPin() != null
+    }
 }
