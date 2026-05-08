@@ -1,8 +1,8 @@
-package com.ojasx.whotouchedmyphone.AppLockLogic
+package com.ojasx.whotouchedmyphone.ViewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
+import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockManager
 
 class AppLockViewModelFactory(
     private val manager: AppLockManager

@@ -32,7 +32,7 @@ class AppLockAccessibilityService : AccessibilityService() {
 
         val isLocked = manager.isAppLocked(packageName)
 
-        // 🔥 Prevent reopening lock repeatedly
+        //  Prevent reopening lock repeatedly
         if (isLocked && lastLockedPackage != packageName) {
 
             lastLockedPackage = packageName

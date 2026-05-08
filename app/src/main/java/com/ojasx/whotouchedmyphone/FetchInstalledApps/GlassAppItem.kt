@@ -38,11 +38,7 @@ fun GlassAppItem(
             .clip(RoundedCornerShape(18.dp))
             .background(Color.White.copy(alpha = 0.08f))
             .clickable {
-                if (isLocked) {
-                onAppClick()
-            } else {
                 onLockClick()
-            }
             }
             .padding(14.dp),
         verticalAlignment = Alignment.CenterVertically

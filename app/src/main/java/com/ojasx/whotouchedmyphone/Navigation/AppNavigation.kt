@@ -7,10 +7,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockManager
-import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockViewModelFactory
+import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModelFactory
 import com.ojasx.whotouchedmyphone.Password.ConfirmPassword
 import com.ojasx.whotouchedmyphone.Password.NewPassword
 import com.ojasx.whotouchedmyphone.Permissions.PermissionSetupScreen
+import com.ojasx.whotouchedmyphone.Permissions.isAccessibilityServiceEnabled
+import com.ojasx.whotouchedmyphone.Permissions.isIgnoringBatteryOptimizations
+import com.ojasx.whotouchedmyphone.Permissions.isOverlayPermissionGranted
 import com.ojasx.whotouchedmyphone.RoomDb.AppDatabase
 import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
 import com.ojasx.whotouchedmyphone.Screens.MainScreen
@@ -36,9 +39,23 @@ fun AppNavigation(isPinSet: Boolean) {
     val appLockViewModel: AppLockViewModel =
         viewModel(factory = appLockFactory)
 
+    val allPermissionsGranted =
+        isOverlayPermissionGranted(context) &&
+                isIgnoringBatteryOptimizations(context) &&
+                isAccessibilityServiceEnabled(context)
+
+    val startDestination = when {
+
+        !allPermissionsGranted -> "permissions"
+
+        isPinSet -> "home"
+
+        else -> "NewPassword"
+    }
+
     NavHost(
         navController = navController,
-        startDestination = "permissions"
+        startDestination = startDestination
     ) {
 
         composable("permissions") {
