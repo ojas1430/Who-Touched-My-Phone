@@ -2,26 +2,46 @@ package com.ojasx.whotouchedmyphone.ViewModel
 
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
+import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockManager
 
-class AppLockViewModel : ViewModel() {
+class AppLockViewModel(
+    private val manager: AppLockManager
+) : ViewModel() {
 
-    private val _lockedApps = mutableStateMapOf<String, Boolean>()
-    val lockedApps: Map<String, Boolean> = _lockedApps
+    // Compose observable state
+    private val lockedAppsState = mutableStateMapOf<String, Boolean>()
+
+    init {
+        // optional preload
+    }
 
     fun isLocked(packageName: String): Boolean {
-        return _lockedApps[packageName] ?: false
+
+        // First check compose state
+        return lockedAppsState[packageName]
+            ?: manager.isAppLocked(packageName)
     }
 
     fun toggleLock(packageName: String) {
-        val current = _lockedApps[packageName] ?: false
-        _lockedApps[packageName] = !current
+
+        val currentlyLocked = manager.isAppLocked(packageName)
+
+        if (currentlyLocked) {
+            manager.unlockApp(packageName)
+            lockedAppsState[packageName] = false
+        } else {
+            manager.lockApp(packageName)
+            lockedAppsState[packageName] = true
+        }
     }
 
     fun lock(packageName: String) {
-        _lockedApps[packageName] = true
+        manager.lockApp(packageName)
+        lockedAppsState[packageName] = true
     }
 
     fun unlock(packageName: String) {
-        _lockedApps[packageName] = false
+        manager.unlockApp(packageName)
+        lockedAppsState[packageName] = false
     }
 }

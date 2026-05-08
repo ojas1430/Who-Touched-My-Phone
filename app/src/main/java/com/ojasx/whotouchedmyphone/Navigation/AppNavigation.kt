@@ -6,6 +6,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockManager
+import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockViewModelFactory
 import com.ojasx.whotouchedmyphone.Password.ConfirmPassword
 import com.ojasx.whotouchedmyphone.Password.NewPassword
 import com.ojasx.whotouchedmyphone.Permissions.PermissionSetupScreen
@@ -27,7 +29,12 @@ fun AppNavigation(isPinSet: Boolean) {
     val factory = PinViewModelFactory(repository)
 
     val pinViewModel: PinViewModel = viewModel(factory = factory)
-    val appLockViewModel: AppLockViewModel = viewModel()
+    val appLockManager = AppLockManager(context)
+
+    val appLockFactory = AppLockViewModelFactory(appLockManager)
+
+    val appLockViewModel: AppLockViewModel =
+        viewModel(factory = appLockFactory)
 
     NavHost(
         navController = navController,

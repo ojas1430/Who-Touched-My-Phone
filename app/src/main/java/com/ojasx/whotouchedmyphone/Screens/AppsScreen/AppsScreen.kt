@@ -3,14 +3,12 @@ package com.ojasx.whotouchedmyphone.Screens.AppsScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.ojasx.whotouchedmyphone.FetchInstalledApps.AppInfo
 import com.ojasx.whotouchedmyphone.FetchInstalledApps.AppListScreen
-import com.ojasx.whotouchedmyphone.Password.LockScreen
 import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
@@ -19,9 +17,6 @@ fun AppsScreen(
     appLockViewModel: AppLockViewModel,
     pinViewModel: PinViewModel
 ) {
-
-    var selectedApp by remember { mutableStateOf<AppInfo?>(null) }
-    var showPinScreen by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
@@ -52,30 +47,11 @@ fun AppsScreen(
 
                 AppListScreen(
                     appLockViewModel = appLockViewModel,
-                    onAppClick = { app ->
-
-                        if (appLockViewModel.isLocked(app.packageName)) {
-                            selectedApp = app
-                            showPinScreen = true
-                        }
+                    onAppClick = {
+                        // no-op
                     }
                 )
             }
-        }
-
-        // 🔐 PIN SCREEN OVERLAY
-        if (showPinScreen && selectedApp != null) {
-
-            LockScreen(
-                pinViewModel = pinViewModel,
-                onUnlockSuccess = {
-
-                    appLockViewModel.unlock(selectedApp!!.packageName)
-
-                    showPinScreen = false
-                    selectedApp = null
-                }
-            )
         }
     }
 }

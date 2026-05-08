@@ -1,28 +1,19 @@
 package com.ojasx.whotouchedmyphone.Permissions
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -30,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
+import kotlinx.coroutines.delay
 
 @Composable
 fun PermissionSetupScreen(
@@ -38,17 +30,40 @@ fun PermissionSetupScreen(
 
     val context = LocalContext.current
 
-    var overlayEnabled by remember { mutableStateOf(isOverlayPermissionGranted(context)) }
-    var batteryEnabled by remember { mutableStateOf(isIgnoringBatteryOptimizations(context)) }
-    var accessibilityEnabled by remember { mutableStateOf(isAccessibilityServiceEnabled(context)) }
-
-    LaunchedEffect(Unit) {
-        overlayEnabled = isOverlayPermissionGranted(context)
-        batteryEnabled = isIgnoringBatteryOptimizations(context)
-        accessibilityEnabled = isAccessibilityServiceEnabled(context)
+    var overlayEnabled by remember {
+        mutableStateOf(false)
     }
 
-    val allGranted = overlayEnabled && batteryEnabled && accessibilityEnabled
+    var batteryEnabled by remember {
+        mutableStateOf(false)
+    }
+
+    var accessibilityEnabled by remember {
+        mutableStateOf(false)
+    }
+
+    // 🔥 Auto refresh permissions
+    LaunchedEffect(Unit) {
+
+        while (true) {
+
+            overlayEnabled =
+                isOverlayPermissionGranted(context)
+
+            batteryEnabled =
+                isIgnoringBatteryOptimizations(context)
+
+            accessibilityEnabled =
+                isAccessibilityServiceEnabled(context)
+
+            delay(1000)
+        }
+    }
+
+    val allGranted =
+        overlayEnabled &&
+                batteryEnabled &&
+                accessibilityEnabled
 
     Column(
         modifier = Modifier
@@ -88,11 +103,14 @@ fun PermissionSetupScreen(
         ) {
 
             item {
+
                 PermissionCard(
                     title = "Accessibility Permission",
                     description = "Required to detect opened apps and lock them.",
                     granted = accessibilityEnabled,
+
                     onClick = {
+
                         context.startActivity(
                             Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                         )
@@ -101,30 +119,38 @@ fun PermissionSetupScreen(
             }
 
             item {
+
                 PermissionCard(
                     title = "Display Over Other Apps",
                     description = "Required to show lock screen above apps.",
                     granted = overlayEnabled,
+
                     onClick = {
+
                         val intent = Intent(
                             Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                             "package:${context.packageName}".toUri()
                         )
+
                         context.startActivity(intent)
                     }
                 )
             }
 
             item {
+
                 PermissionCard(
                     title = "Ignore Battery Optimization",
                     description = "Prevents Android from stopping the app lock service.",
                     granted = batteryEnabled,
+
                     onClick = {
+
                         val intent = Intent(
                             Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
                             Uri.parse("package:${context.packageName}")
                         )
+
                         context.startActivity(intent)
                     }
                 )
@@ -135,9 +161,6 @@ fun PermissionSetupScreen(
 
         Button(
             onClick = {
-                overlayEnabled = isOverlayPermissionGranted(context)
-                batteryEnabled = isIgnoringBatteryOptimizations(context)
-                accessibilityEnabled = isAccessibilityServiceEnabled(context)
 
                 if (allGranted) {
                     onAllPermissionsGranted()
@@ -179,4 +202,29 @@ fun PermissionSetupScreen(
             )
         }
     }
+}
+
+fun isOverlayPermissionGranted(context: Context): Boolean {
+
+    return Settings.canDrawOverlays(context)
+}
+
+fun isIgnoringBatteryOptimizations(context: Context): Boolean {
+
+    val powerManager =
+        context.getSystemService(Context.POWER_SERVICE) as PowerManager
+
+    return powerManager.isIgnoringBatteryOptimizations(
+        context.packageName
+    )
+}
+
+fun isAccessibilityServiceEnabled(context: Context): Boolean {
+
+    val enabledServices = Settings.Secure.getString(
+        context.contentResolver,
+        Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+    ) ?: return false
+
+    return enabledServices.contains(context.packageName)
 }
