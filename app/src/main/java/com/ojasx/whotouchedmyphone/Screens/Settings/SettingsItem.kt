@@ -44,6 +44,7 @@ fun GlassSettingsItem(
     icon: ImageVector,
     text: String,
     hasSwitch: Boolean,
+    onClick :()->Unit,
     switchState: MutableState<Boolean>? = null
 ) {
     Row(
@@ -57,7 +58,10 @@ fun GlassSettingsItem(
                 Color.White.copy(alpha = 0.08f),
                 RoundedCornerShape(16.dp)
             )
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
+            .clickable {
+                onClick()
+            },
         verticalAlignment = Alignment.CenterVertically
     ) {
 

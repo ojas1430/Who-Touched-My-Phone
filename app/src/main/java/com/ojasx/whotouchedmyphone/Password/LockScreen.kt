@@ -19,8 +19,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.ojasx.whotouchedmyphone.CameraXManager
 import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
 import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
 import com.ojasx.whotouchedmyphone.R
@@ -29,11 +29,15 @@ import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 @Composable
 fun LockScreen(
     pinViewModel: PinViewModel,
+    cameraXManager: CameraXManager,
     onUnlockSuccess: () -> Unit
 ) {
+
     val pin = pinViewModel.pin.value
-    var pinval by remember { mutableStateOf("") }
-    var error by remember { mutableStateOf(false) }
+
+    var error by remember {
+        mutableStateOf(false)
+    }
 
     Column(
         modifier = Modifier
@@ -110,6 +114,17 @@ fun LockScreen(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 PinDots(pinLength = pin.length)
+
+                if (error) {
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = "Wrong PIN",
+                        color = Color.Red,
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
         }
 
@@ -117,13 +132,39 @@ fun LockScreen(
             modifier = Modifier
                 .weight(0.4f)
                 .fillMaxWidth(),
-            onNumberClick = { pinViewModel.onNumberClick(it) },
-            onDeleteClick = { pinViewModel.onDeleteClick() },
+
+            onNumberClick = {
+                error = false
+                pinViewModel.onNumberClick(it)
+            },
+
+            onDeleteClick = {
+                pinViewModel.onDeleteClick()
+            },
+
             onConfirmClick = {
+
                 pinViewModel.verifyPin(
-                    onSuccess = { onUnlockSuccess() },
+
+                    onSuccess = {
+                        error = false
+                        onUnlockSuccess()
+                    },
+
                     onError = {
-                        // optional: vibration / animation
+
+                        error = true
+
+                        cameraXManager.takePhoto(
+
+                            onSuccess = {
+
+                            },
+
+                            onError = {
+
+                            }
+                        )
                     }
                 )
             }

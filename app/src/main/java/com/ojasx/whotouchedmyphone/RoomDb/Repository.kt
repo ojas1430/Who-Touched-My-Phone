@@ -22,4 +22,13 @@ class PinRepository(private val dao: PinDao) {
     suspend fun isPinSet(): Boolean {
         return dao.getPin() != null
     }
+
+    suspend fun updatePin(newPin: String) {
+        dao.savePin(
+            PinEntity(
+                id = 0,
+                pinHash = hashPin(newPin)
+            )
+        )
+    }
 }

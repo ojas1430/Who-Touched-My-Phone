@@ -31,7 +31,7 @@ fun MainScreen(
         when (selectedIndex) {
             0 -> DashboardScreen()
             1 -> LogsScreen()
-            2 -> SettingsScreen()
+            2 -> SettingsScreen(navController)
             4 -> AppsScreen(appLockViewModel, pinViewModel )
         }
 

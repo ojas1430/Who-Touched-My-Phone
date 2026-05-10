@@ -31,10 +31,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
-@Preview
+
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(
+    navController: NavController
+) {
 
     val switchState1 = remember { mutableStateOf(true) }
     val switchState2 = remember { mutableStateOf(true) }
@@ -67,13 +70,17 @@ fun SettingsScreen() {
             GlassSettingsItem(
                 icon = Icons.Default.Lock,
                 text = "Change PIN",
-                hasSwitch = false
+                hasSwitch = false,
+                onClick = {
+                    navController.navigate("NewPassword")
+                }
             )
 
             GlassSettingsItem(
                 icon = Icons.Default.Security,
                 text = "Intruder Detection",
                 hasSwitch = true,
+                onClick = {},
                 switchState = switchState1
             )
 
@@ -81,6 +88,7 @@ fun SettingsScreen() {
                 icon = Icons.Default.Email,
                 text = "Email Alerts",
                 hasSwitch = true,
+                onClick = {},
                 switchState = switchState2
             )
 
@@ -88,6 +96,7 @@ fun SettingsScreen() {
                 icon = Icons.Default.VolumeUp,
                 text = "Sound on Wrong Attempt",
                 hasSwitch = true,
+                onClick = {},
                 switchState = switchState3
             )
 
@@ -95,20 +104,24 @@ fun SettingsScreen() {
                 icon = Icons.Default.DarkMode,
                 text = "Dark Mode",
                 hasSwitch = true,
+                onClick = {},
                 switchState = switchState4
             )
 
             GlassSettingsItem(
                 icon = Icons.Default.Help,
                 text = "Security Question",
-                hasSwitch = false
-            )
+                hasSwitch = false,
+                onClick = {}
+                )
 
             GlassSettingsItem(
                 icon = Icons.Default.Info,
                 text = "About App",
-                hasSwitch = false
-            )
+                hasSwitch = false,
+                onClick = {},
+
+                )
         }
     }
 }

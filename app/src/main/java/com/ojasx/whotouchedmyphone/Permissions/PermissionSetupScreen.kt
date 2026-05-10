@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -104,20 +105,60 @@ fun PermissionSetupScreen(
 
             item {
 
-                PermissionCard(
-                    title = "Accessibility Permission",
-                    description = "Required to detect opened apps and lock them.",
-                    granted = accessibilityEnabled,
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
 
-                    onClick = {
+                    // 🔥 REQUIRED PROMINENT DISCLOSURE (ADD THIS)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(
+                                Color(0xFF1E1A2E),
+                                RoundedCornerShape(16.dp)
+                            )
+                            .border(
+                                1.dp,
+                                Color(0xFF7B61FF),
+                                RoundedCornerShape(16.dp)
+                            )
+                            .padding(14.dp)
+                    ) {
 
-                        context.startActivity(
-                            Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                        )
+                        Column {
+
+                            Text(
+                                text = "Accessibility Permission Required",
+                                color = Color.White,
+                                fontWeight = FontWeight.Bold
+                            )
+
+                            Spacer(modifier = Modifier.height(6.dp))
+
+                            Text(
+                                text =
+                                    "This app uses Accessibility Service only to detect which app is opened and lock selected apps with a PIN.\n\n" +
+                                            "We do NOT collect, store, or share any personal data.",
+                                color = Color.LightGray
+                            )
+                        }
                     }
-                )
-            }
 
+                    // Your existing card
+                    PermissionCard(
+                        title = "Accessibility Permission",
+                        description = "Required to detect opened apps and lock them securely.",
+                        granted = accessibilityEnabled,
+
+                        onClick = {
+
+                            context.startActivity(
+                                Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+                            )
+                        }
+                    )
+                }
+            }
             item {
 
                 PermissionCard(
