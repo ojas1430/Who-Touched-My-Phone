@@ -3,10 +3,17 @@ package com.ojasx.whotouchedmyphone.AppLockLogic
 import android.accessibilityservice.AccessibilityService
 import android.content.Intent
 import android.view.accessibility.AccessibilityEvent
-import com.ojasx.whotouchedmyphone.AppLockLogic.AppLockManager
-import com.ojasx.whotouchedmyphone.AppLockLogic.LockScreenActivity
 
 class AppLockAccessibilityService : AccessibilityService() {
+
+    companion object {
+
+        // App unlocked temporarily after correct PIN
+        var temporarilyUnlockedPackage: String? = null
+
+        // Prevent multiple lock screens
+        var isLockScreenShowing = false
+    }
 
     private var lastLockedPackage = ""
 
@@ -23,8 +30,13 @@ class AppLockAccessibilityService : AccessibilityService() {
             return
         }
 
-        // Ignore system UI
+        // Ignore system ui
         if (packageName == "com.android.systemui") {
+            return
+        }
+
+        // Already unlocked
+        if (packageName == temporarilyUnlockedPackage) {
             return
         }
 
@@ -32,14 +44,19 @@ class AppLockAccessibilityService : AccessibilityService() {
 
         val isLocked = manager.isAppLocked(packageName)
 
-        //  Prevent reopening lock repeatedly
-        if (isLocked && lastLockedPackage != packageName) {
+        // Prevent repeated lock screen
+        if (
+            isLocked &&
+            lastLockedPackage != packageName &&
+            !isLockScreenShowing
+        ) {
 
             lastLockedPackage = packageName
 
+            isLockScreenShowing = true
+
             val intent = Intent(this, LockScreenActivity::class.java).apply {
 
-                // 🔥 Pass app package name
                 putExtra("PACKAGE_NAME", packageName)
 
                 addFlags(
@@ -52,9 +69,14 @@ class AppLockAccessibilityService : AccessibilityService() {
             startActivity(intent)
         }
 
-        // 🔥 Reset when user leaves app
+        // Reset when user leaves app
         if (packageName != lastLockedPackage) {
+
             lastLockedPackage = ""
+
+            if (packageName != temporarilyUnlockedPackage) {
+                temporarilyUnlockedPackage = null
+            }
         }
     }
 
