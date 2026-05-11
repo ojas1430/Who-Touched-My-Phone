@@ -1,67 +1,68 @@
 package com.ojasx.whotouchedmyphone.Screens.Settings.Cards
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.compose.ui.platform.LocalContext
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
-import com.ojasx.whotouchedmyphone.RoomDb.SecurityAns.SecurityAnswer
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SecurityQuestionScreen(
-    navController: NavController
+fun ForgotPinScreen(
+    navController: NavController,
+    onAnswerCorrect: () -> Unit
 ) {
 
     val context = LocalContext.current
 
     val scope = rememberCoroutineScope()
 
-    val questions = listOf(
-
-        "What was your childhood nickname?",
-
-        "What is the name of your first school?",
-
-        "What was your first pet’s name?",
-
-        "Which city were you born in?",
-
-        "What is your favorite movie?",
-
-        "What is your dream job?",
-
-        "What was your first phone model?",
-
-        "What is your mother’s maiden name?"
-    )
-
-    var selectedQuestionIndex by remember {
-        mutableIntStateOf(-1)
+    var savedQuestion by remember {
+        mutableStateOf("")
     }
 
-    var answer by remember {
+    var savedAnswer by remember {
+        mutableStateOf("")
+    }
+
+    var enteredAnswer by remember {
         mutableStateOf("")
     }
 
     var showError by remember {
         mutableStateOf(false)
+    }
+
+    // Load saved question + answer
+    LaunchedEffect(Unit) {
+
+        scope.launch {
+
+            val data =
+                AppDatabase
+                    .getDatabase(context)
+                    .securityAnswerDao()
+                    .getSecurityData()
+
+            if (data != null) {
+
+                savedQuestion = data.question
+                savedAnswer = data.answer
+            }
+        }
     }
 
     Scaffold(
@@ -103,7 +104,7 @@ fun SecurityQuestionScreen(
                 title = {
 
                     Text(
-                        text = "Security Questions",
+                        text = "Forgot PIN",
                         color = Color.White,
                         fontWeight = FontWeight.Bold
                     )
@@ -138,12 +139,12 @@ fun SecurityQuestionScreen(
         ) {
 
             Spacer(
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(30.dp)
             )
 
             Text(
 
-                text = "Choose a Security Question",
+                text = "Recover Your PIN",
 
                 style = MaterialTheme.typography.headlineMedium,
 
@@ -159,93 +160,62 @@ fun SecurityQuestionScreen(
             Text(
 
                 text =
-                    "Select one question and set an answer for account recovery.",
+                    "Answer your security question to reset your PIN.",
 
                 color = Color.LightGray
             )
 
             Spacer(
-                modifier = Modifier.height(24.dp)
+                modifier = Modifier.height(30.dp)
             )
 
-            LazyColumn(
+            // Question Card
+            Box(
 
-                modifier = Modifier.weight(1f),
-
-                verticalArrangement = Arrangement.spacedBy(14.dp),
-
-                contentPadding = PaddingValues(
-                    bottom = 20.dp
-                )
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        Color(0xFF1A1F2E),
+                        RoundedCornerShape(20.dp)
+                    )
+                    .padding(20.dp)
             ) {
 
-                itemsIndexed(questions) { index, question ->
+                Column {
 
-                    val isSelected =
-                        selectedQuestionIndex == index
+                    Text(
 
-                    Box(
+                        text = "Security Question",
 
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
+                        color = Color(0xFFB388FF),
 
-                                if (isSelected)
-                                    Color(0xFF7B61FF).copy(alpha = 0.25f)
-                                else
-                                    Color(0xFF1A1F2E),
+                        fontWeight = FontWeight.Bold
+                    )
 
-                                shape = RoundedCornerShape(18.dp)
-                            )
-                            .clickable {
+                    Spacer(
+                        modifier = Modifier.height(12.dp)
+                    )
 
-                                selectedQuestionIndex = index
-                                showError = false
-                            }
-                            .padding(18.dp)
-                    ) {
+                    Text(
 
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
+                        text = savedQuestion,
 
-                            Text(
-
-                                text = question,
-
-                                color = Color.White,
-
-                                modifier = Modifier.weight(1f)
-                            )
-
-                            if (isSelected) {
-
-                                Icon(
-
-                                    imageVector =
-                                        Icons.Default.CheckCircle,
-
-                                    contentDescription = null,
-
-                                    tint = Color(0xFF7B61FF)
-                                )
-                            }
-                        }
-                    }
+                        color = Color.White
+                    )
                 }
             }
 
             Spacer(
-                modifier = Modifier.height(10.dp)
+                modifier = Modifier.height(24.dp)
             )
 
             OutlinedTextField(
 
-                value = answer,
+                value = enteredAnswer,
 
                 onValueChange = {
 
-                    answer = it
+                    enteredAnswer = it
                     showError = false
                 },
 
@@ -262,6 +232,9 @@ fun SecurityQuestionScreen(
                 textStyle = LocalTextStyle.current.copy(
                     color = Color.White
                 ),
+
+                visualTransformation =
+                    PasswordVisualTransformation(),
 
                 colors = OutlinedTextFieldDefaults.colors(
 
@@ -287,15 +260,14 @@ fun SecurityQuestionScreen(
 
                 Text(
 
-                    text =
-                        "Please select a question and enter an answer.",
+                    text = "Incorrect answer",
 
                     color = Color.Red
                 )
             }
 
             Spacer(
-                modifier = Modifier.height(20.dp)
+                modifier = Modifier.height(28.dp)
             )
 
             Button(
@@ -303,27 +275,15 @@ fun SecurityQuestionScreen(
                 onClick = {
 
                     if (
-                        selectedQuestionIndex != -1 &&
-                        answer.isNotBlank()
+
+                        enteredAnswer.trim()
+                            .equals(
+                                savedAnswer.trim(),
+                                ignoreCase = true
+                            )
                     ) {
-                        val selectedQuestion =
-                            questions[selectedQuestionIndex]
 
-                        scope.launch {
-
-                            AppDatabase
-                                .getDatabase(context)
-                                .securityAnswerDao()
-                                .saveAnswer(
-
-                                    SecurityAnswer(
-                                        question = selectedQuestion,
-                                        answer = answer
-                                    )
-                                )
-                        }
-
-                        navController.popBackStack()
+                        onAnswerCorrect()
 
                     } else {
 
@@ -344,17 +304,13 @@ fun SecurityQuestionScreen(
 
                 Text(
 
-                    text = "Save Security Question",
+                    text = "Verify Answer",
 
                     color = Color.White,
 
                     fontWeight = FontWeight.Bold
                 )
             }
-
-            Spacer(
-                modifier = Modifier.height(20.dp)
-            )
         }
     }
 }

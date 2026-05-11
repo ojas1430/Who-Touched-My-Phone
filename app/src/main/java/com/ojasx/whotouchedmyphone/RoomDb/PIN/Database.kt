@@ -6,12 +6,21 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.ojasx.whotouchedmyphone.RoomDb.Logs.IntruderLog
 import com.ojasx.whotouchedmyphone.RoomDb.Logs.IntruderLogDao
+import com.ojasx.whotouchedmyphone.RoomDb.SecurityAns.SecurityAnswer
+import com.ojasx.whotouchedmyphone.RoomDb.SecurityAns.SecurityAnswerDao
 
-@Database(entities = [PinEntity::class, IntruderLog::class], version = 3)
+@Database(
+    entities = [
+        PinEntity::class,
+        IntruderLog::class,
+        SecurityAnswer::class
+               ],
+    version = 4)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun pinDao(): PinDao
     abstract fun intruderLogDao(): IntruderLogDao
+    abstract fun securityAnswerDao(): SecurityAnswerDao
 
     companion object {
 
