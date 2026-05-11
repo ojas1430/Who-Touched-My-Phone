@@ -17,6 +17,8 @@ import com.ojasx.whotouchedmyphone.Permissions.isOverlayPermissionGranted
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
 import com.ojasx.whotouchedmyphone.Screens.MainScreen
+import com.ojasx.whotouchedmyphone.Screens.Settings.Cards.AboutAppScreen
+import com.ojasx.whotouchedmyphone.Screens.Settings.Cards.SecurityQuestionScreen
 import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModelFactory
@@ -125,6 +127,13 @@ fun AppNavigation(isPinSet: Boolean) {
                 pinViewModel,
                 navController
             )
+        }
+
+        composable("AboutAppScreen"){
+            AboutAppScreen(navController)
+        }
+        composable("SecurityQuestionScreen"){
+            SecurityQuestionScreen(navController)
         }
     }
 }

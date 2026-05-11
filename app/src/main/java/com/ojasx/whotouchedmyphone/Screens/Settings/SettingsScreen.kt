@@ -113,14 +113,18 @@ fun SettingsScreen(
                 icon = Icons.Default.Help,
                 text = "Security Question",
                 hasSwitch = false,
-                onClick = {}
+                onClick = {
+                    navController.navigate("SecurityQuestionScreen")
+                }
                 )
 
             GlassSettingsItem(
                 icon = Icons.Default.Info,
                 text = "About App",
                 hasSwitch = false,
-                onClick = {},
+                onClick = {
+                    navController.navigate("AboutAppScreen")
+                },
 
                 )
         }
