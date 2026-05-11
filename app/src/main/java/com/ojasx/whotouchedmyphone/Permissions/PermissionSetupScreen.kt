@@ -7,14 +7,13 @@ import android.os.PowerManager
 import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -43,7 +42,11 @@ fun PermissionSetupScreen(
         mutableStateOf(false)
     }
 
-    // 🔥 Auto refresh permissions
+    var showAccessibilityInfoDialog by remember {
+        mutableStateOf(false)
+    }
+
+    // Auto refresh permissions
     LaunchedEffect(Unit) {
 
         while (true) {
@@ -66,88 +69,84 @@ fun PermissionSetupScreen(
                 batteryEnabled &&
                 accessibilityEnabled
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF0B0E17),
-                        Color(0xFF111528),
-                        Color(0xFF0B0E17)
+    Scaffold(
+
+        modifier = Modifier.fillMaxSize(),
+
+        containerColor = Color.Transparent,
+
+        contentWindowInsets = WindowInsets.systemBars
+
+    ) { padding ->
+
+        Column(
+
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF0B0E17),
+                            Color(0xFF111528),
+                            Color(0xFF0B0E17)
+                        )
                     )
                 )
-            )
-            .padding(16.dp)
-    ) {
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        Text(
-            text = "Setup App Lock",
-            style = MaterialTheme.typography.headlineMedium,
-            color = Color.White,
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "Enable all permissions to protect your apps.",
-            color = Color.LightGray
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+                .padding(padding)
+                .padding(horizontal = 16.dp)
         ) {
 
-            item {
+            Spacer(modifier = Modifier.height(20.dp))
 
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
+            Text(
+                text = "Setup App Lock",
+                style = MaterialTheme.typography.headlineMedium,
+                color = Color.White,
+                fontWeight = FontWeight.Bold
+            )
 
-                    // 🔥 REQUIRED PROMINENT DISCLOSURE (ADD THIS)
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(
-                                Color(0xFF1E1A2E),
-                                RoundedCornerShape(16.dp)
-                            )
-                            .border(
-                                1.dp,
-                                Color(0xFF7B61FF),
-                                RoundedCornerShape(16.dp)
-                            )
-                            .padding(14.dp)
-                    ) {
+            Spacer(modifier = Modifier.height(8.dp))
 
-                        Column {
+            Text(
+                text = "Enable all permissions to protect your apps.",
+                color = Color.LightGray
+            )
 
-                            Text(
-                                text = "Accessibility Permission Required",
-                                color = Color.White,
-                                fontWeight = FontWeight.Bold
-                            )
+            Spacer(modifier = Modifier.height(18.dp))
 
-                            Spacer(modifier = Modifier.height(6.dp))
+            // Info Button
+            Text(
 
-                            Text(
-                                text =
-                                    "This app uses Accessibility Service only to detect which app is opened and lock selected apps with a PIN.\n\n" +
-                                            "We do NOT collect, store, or share any personal data.",
-                                color = Color.LightGray
-                            )
-                        }
-                    }
+                text = "Why Accessibility Permission?",
 
-                    // Your existing card
+                color = Color(0xFF7B61FF),
+
+                fontWeight = FontWeight.SemiBold,
+
+                modifier = Modifier.clickable {
+
+                    showAccessibilityInfoDialog = true
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            LazyColumn(
+
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+
+                modifier = Modifier.weight(1f)
+            ) {
+
+                item {
+
                     PermissionCard(
+
                         title = "Accessibility Permission",
-                        description = "Required to detect opened apps and lock them securely.",
+
+                        description =
+                            "Required to detect opened apps and lock them securely.",
+
                         granted = accessibilityEnabled,
 
                         onClick = {
@@ -158,88 +157,189 @@ fun PermissionSetupScreen(
                         }
                     )
                 }
+
+                item {
+
+                    PermissionCard(
+
+                        title = "Display Over Other Apps",
+
+                        description =
+                            "Required to show lock screen above apps.",
+
+                        granted = overlayEnabled,
+
+                        onClick = {
+
+                            val intent = Intent(
+                                Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                                "package:${context.packageName}".toUri()
+                            )
+
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+
+                item {
+
+                    PermissionCard(
+
+                        title = "Ignore Battery Optimization",
+
+                        description =
+                            "Prevents Android from stopping the app lock service.",
+
+                        granted = batteryEnabled,
+
+                        onClick = {
+
+                            val intent = Intent(
+                                Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
+                                Uri.parse("package:${context.packageName}")
+                            )
+
+                            context.startActivity(intent)
+                        }
+                    )
+                }
+
+                item {
+
+                    Spacer(
+                        modifier = Modifier.height(20.dp)
+                    )
+                }
             }
-            item {
 
-                PermissionCard(
-                    title = "Display Over Other Apps",
-                    description = "Required to show lock screen above apps.",
-                    granted = overlayEnabled,
+            Button(
 
-                    onClick = {
+                onClick = {
 
-                        val intent = Intent(
-                            Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-                            "package:${context.packageName}".toUri()
-                        )
+                    if (allGranted) {
 
-                        context.startActivity(intent)
+                        onAllPermissionsGranted()
                     }
+                },
+
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(bottom = 12.dp)
+                    .height(58.dp),
+
+                enabled = allGranted,
+
+                shape = RoundedCornerShape(18.dp),
+
+                colors = ButtonDefaults.buttonColors(
+
+                    containerColor =
+                        if (allGranted)
+                            Color(0xFF7B61FF)
+                        else
+                            Color(0xFF3A315E),
+
+                    contentColor = Color.White,
+
+                    disabledContainerColor = Color(0xFF2A2438),
+
+                    disabledContentColor = Color.LightGray
                 )
-            }
 
-            item {
+            ) {
 
-                PermissionCard(
-                    title = "Ignore Battery Optimization",
-                    description = "Prevents Android from stopping the app lock service.",
-                    granted = batteryEnabled,
+                Text(
 
-                    onClick = {
+                    text =
+                        if (allGranted)
+                            "Continue"
+                        else
+                            "Enable All Permissions",
 
-                        val intent = Intent(
-                            Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS,
-                            Uri.parse("package:${context.packageName}")
-                        )
-
-                        context.startActivity(intent)
-                    }
+                    fontWeight = FontWeight.Bold
                 )
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        // Accessibility Info Dialog
+        if (showAccessibilityInfoDialog) {
 
-        Button(
-            onClick = {
+            AlertDialog(
 
-                if (allGranted) {
-                    onAllPermissionsGranted()
+                onDismissRequest = {
+
+                    showAccessibilityInfoDialog = false
+                },
+
+                confirmButton = {
+
+                    TextButton(
+
+                        onClick = {
+
+                            showAccessibilityInfoDialog = false
+                        }
+                    ) {
+
+                        Text(
+                            text = "Got it"
+                        )
+                    }
+                },
+
+                title = {
+
+                    Text(
+                        text = "Accessibility Permission"
+                    )
+                },
+
+                text = {
+
+                    Column {
+
+                        Text(
+                            text =
+                                "This app uses Accessibility Service only to:"
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(12.dp)
+                        )
+
+                        Text(
+                            text = "• Detect opened apps"
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(6.dp)
+                        )
+
+                        Text(
+                            text = "• Lock selected apps with PIN"
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(6.dp)
+                        )
+
+                        Text(
+                            text =
+                                "• Prevent unauthorized access"
+                        )
+
+                        Spacer(
+                            modifier = Modifier.height(16.dp)
+                        )
+
+                        Text(
+                            text =
+                                "We do NOT collect, store, or share personal data.",
+                            color = Color.Gray
+                        )
+                    }
                 }
-            },
-
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(58.dp),
-
-            enabled = allGranted,
-
-            shape = RoundedCornerShape(18.dp),
-
-            colors = ButtonDefaults.buttonColors(
-
-                containerColor =
-                    if (allGranted)
-                        Color(0xFF7B61FF)
-                    else
-                        Color(0xFF3A315E),
-
-                contentColor = Color.White,
-
-                disabledContainerColor = Color(0xFF2A2438),
-                disabledContentColor = Color.LightGray
-            )
-
-        ) {
-
-            Text(
-                text =
-                    if (allGranted)
-                        "Continue"
-                    else
-                        "Enable All Permissions",
-
-                fontWeight = FontWeight.Bold
             )
         }
     }
@@ -263,9 +363,14 @@ fun isIgnoringBatteryOptimizations(context: Context): Boolean {
 fun isAccessibilityServiceEnabled(context: Context): Boolean {
 
     val enabledServices = Settings.Secure.getString(
+
         context.contentResolver,
+
         Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+
     ) ?: return false
 
-    return enabledServices.contains(context.packageName)
+    return enabledServices.contains(
+        context.packageName
+    )
 }
