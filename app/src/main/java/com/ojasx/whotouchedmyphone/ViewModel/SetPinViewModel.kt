@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
 import kotlinx.coroutines.launch
 
 class PinViewModel(private val repository: PinRepository) : ViewModel() {

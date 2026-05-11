@@ -13,6 +13,8 @@ class AppLockAccessibilityService : AccessibilityService() {
 
         // Prevent multiple lock screens
         var isLockScreenShowing = false
+        var currentLockedPackage: String? = null
+
     }
 
     private var lastLockedPackage = ""

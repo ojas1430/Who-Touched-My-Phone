@@ -4,8 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
-import com.ojasx.whotouchedmyphone.RoomDb.AppDatabase
-import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
 import com.ojasx.whotouchedmyphone.navigation.AppNavigation
 import kotlinx.coroutines.launch
 

@@ -14,8 +14,8 @@ import com.ojasx.whotouchedmyphone.Permissions.PermissionSetupScreen
 import com.ojasx.whotouchedmyphone.Permissions.isAccessibilityServiceEnabled
 import com.ojasx.whotouchedmyphone.Permissions.isIgnoringBatteryOptimizations
 import com.ojasx.whotouchedmyphone.Permissions.isOverlayPermissionGranted
-import com.ojasx.whotouchedmyphone.RoomDb.AppDatabase
-import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
 import com.ojasx.whotouchedmyphone.Screens.MainScreen
 import com.ojasx.whotouchedmyphone.ViewModel.AppLockViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel

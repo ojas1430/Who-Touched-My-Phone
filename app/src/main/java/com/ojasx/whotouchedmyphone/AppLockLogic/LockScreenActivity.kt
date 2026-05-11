@@ -1,5 +1,6 @@
 package com.ojasx.whotouchedmyphone.AppLockLogic
 
+import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -15,20 +16,20 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.ViewModelProvider
 import com.ojasx.whotouchedmyphone.CameraXManager
 import com.ojasx.whotouchedmyphone.Password.LockScreen
-import com.ojasx.whotouchedmyphone.RoomDb.AppDatabase
-import com.ojasx.whotouchedmyphone.RoomDb.PinRepository
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
+import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModelFactory
-import android.Manifest
 
 class LockScreenActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
 
-        // Get locked app package
+        // Locked app package
         val packageNameToOpen =
-            intent.getStringExtra("PACKAGE_NAME")
+            intent.getStringExtra("PACKAGE_NAME") ?: ""
 
         // Database
         val database =
@@ -43,17 +44,20 @@ class LockScreenActivity : ComponentActivity() {
             PinViewModelFactory(repository)
 
         // ViewModel
-        val pinViewModel = ViewModelProvider(
-            this,
-            factory
-        )[PinViewModel::class.java]
+        val pinViewModel =
+            ViewModelProvider(
+                this,
+                factory
+            )[PinViewModel::class.java]
 
-        // CameraX Manager
-        val cameraXManager = CameraXManager(
-            context = this,
-            lifecycleOwner = this
-        )
+        // CameraX
+        val cameraXManager =
+            CameraXManager(
+                context = this,
+                lifecycleOwner = this
+            )
 
+        // Camera permission
         ActivityCompat.requestPermissions(
             this,
             arrayOf(Manifest.permission.CAMERA),
@@ -62,50 +66,61 @@ class LockScreenActivity : ComponentActivity() {
 
         setContent {
 
-            // Hidden PreviewView
             val previewView = remember {
                 PreviewView(this)
             }
 
-            // Start Camera
+            // Start hidden camera
             LaunchedEffect(Unit) {
-                cameraXManager.startCamera(previewView)
+
+                cameraXManager.startCamera(
+                    previewView
+                )
             }
 
-            // Hidden camera preview
+            // Hidden PreviewView
             AndroidView(
-                factory = { previewView },
+
+                factory = {
+                    previewView
+                },
+
                 modifier = Modifier.size(1.dp)
             )
 
             LockScreen(
 
                 pinViewModel = pinViewModel,
+
                 cameraXManager = cameraXManager,
+
+                lockedPackageName = packageNameToOpen,
 
                 onUnlockSuccess = {
 
-                    AppLockAccessibilityService.temporarilyUnlockedPackage =
+                    AppLockAccessibilityService
+                        .temporarilyUnlockedPackage =
                         packageNameToOpen
 
-                    AppLockAccessibilityService.isLockScreenShowing = false
+                    AppLockAccessibilityService
+                        .isLockScreenShowing = false
 
                     // Open locked app
-                    if (packageNameToOpen != null) {
-
-                        val launchIntent =
-                            packageManager.getLaunchIntentForPackage(
+                    val launchIntent =
+                        packageManager
+                            .getLaunchIntentForPackage(
                                 packageNameToOpen
                             )
 
-                        if (launchIntent != null) {
+                    launchIntent?.addFlags(
+                        Intent.FLAG_ACTIVITY_NEW_TASK
+                    )
 
-                            launchIntent.addFlags(
-                                Intent.FLAG_ACTIVITY_NEW_TASK
-                            )
+                    if (launchIntent != null) {
 
-                            startActivity(launchIntent)
-                        }
+                        startActivity(
+                            launchIntent
+                        )
                     }
 
                     finish()
@@ -115,8 +130,10 @@ class LockScreenActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+
         super.onDestroy()
 
-        AppLockAccessibilityService.isLockScreenShowing = false
+        AppLockAccessibilityService
+            .isLockScreenShowing = false
     }
 }

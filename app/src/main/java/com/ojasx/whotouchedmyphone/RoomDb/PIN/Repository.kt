@@ -1,6 +1,4 @@
-package com.ojasx.whotouchedmyphone.RoomDb
-
-import android.util.Log
+package com.ojasx.whotouchedmyphone.RoomDb.PIN
 
 class PinRepository(private val dao: PinDao) {
 

@@ -1,4 +1,4 @@
-package com.ojasx.whotouchedmyphone.RoomDb
+package com.ojasx.whotouchedmyphone.RoomDb.PIN
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,3 +9,5 @@ data class PinEntity(
     val id: Int = 0,
     val pinHash: String
 )
+
+

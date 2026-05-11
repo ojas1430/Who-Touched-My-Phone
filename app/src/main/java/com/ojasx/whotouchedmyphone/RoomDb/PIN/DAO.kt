@@ -1,4 +1,4 @@
-package com.ojasx.whotouchedmyphone.RoomDb
+package com.ojasx.whotouchedmyphone.RoomDb.PIN
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -17,3 +17,4 @@ interface PinDao {
     @Query("DELETE FROM pin_table")
     suspend fun deletePin()
 }
+

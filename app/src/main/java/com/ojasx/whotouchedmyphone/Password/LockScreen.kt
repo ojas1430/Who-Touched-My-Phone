@@ -6,11 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -30,6 +26,7 @@ import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 fun LockScreen(
     pinViewModel: PinViewModel,
     cameraXManager: CameraXManager,
+    lockedPackageName: String,
     onUnlockSuccess: () -> Unit
 ) {
 
@@ -113,11 +110,15 @@ fun LockScreen(
 
                 Spacer(modifier = Modifier.height(20.dp))
 
-                PinDots(pinLength = pin.length)
+                PinDots(
+                    pinLength = pin.length
+                )
 
                 if (error) {
 
-                    Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(
+                        modifier = Modifier.height(8.dp)
+                    )
 
                     Text(
                         text = "Wrong PIN",
@@ -129,16 +130,20 @@ fun LockScreen(
         }
 
         NumberPad(
+
             modifier = Modifier
                 .weight(0.4f)
                 .fillMaxWidth(),
 
             onNumberClick = {
+
                 error = false
+
                 pinViewModel.onNumberClick(it)
             },
 
             onDeleteClick = {
+
                 pinViewModel.onDeleteClick()
             },
 
@@ -147,7 +152,9 @@ fun LockScreen(
                 pinViewModel.verifyPin(
 
                     onSuccess = {
+
                         error = false
+
                         onUnlockSuccess()
                     },
 
@@ -156,6 +163,8 @@ fun LockScreen(
                         error = true
 
                         cameraXManager.takePhoto(
+
+                            packageName = lockedPackageName,
 
                             onSuccess = {
 
@@ -170,6 +179,8 @@ fun LockScreen(
             }
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(
+            modifier = Modifier.height(20.dp)
+        )
     }
 }
