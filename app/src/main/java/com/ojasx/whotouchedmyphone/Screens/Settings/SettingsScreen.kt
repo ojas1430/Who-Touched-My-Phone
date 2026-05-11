@@ -57,6 +57,7 @@ fun SettingsScreen(
                 )
             )
             .padding(horizontal = 16.dp)
+            .padding(bottom = 80.dp)
     ) {
 
         Spacer(modifier = Modifier.height(36.dp))

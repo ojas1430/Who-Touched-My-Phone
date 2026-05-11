@@ -13,7 +13,10 @@ import androidx.compose.ui.unit.sp
 import com.ojasx.whotouchedmyphone.R
 
 @Composable
-fun TotalIntrusionsCard() {
+fun TotalIntrusionsCard(
+    total: Int
+) {
+
     GlassCard {
 
         Box(
@@ -25,18 +28,22 @@ fun TotalIntrusionsCard() {
             Column(
                 modifier = Modifier
                     .align(Alignment.CenterStart),
+
                 verticalArrangement = Arrangement.Center
             ) {
+
                 Text(
                     text = "Total Intrusions",
                     color = Color.White.copy(alpha = 0.7f),
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier = Modifier.height(12.dp))
+                Spacer(
+                    modifier = Modifier.height(12.dp)
+                )
 
                 Text(
-                    text = "12",
+                    text = total.toString(),
                     color = Color.White,
                     fontSize = 26.sp
                 )

@@ -123,6 +123,7 @@ fun LogsScreen() {
                     )
                 )
                 .padding(padding)
+                .padding(bottom = 80.dp)
         ) {
 
             if (logs.isEmpty()) {

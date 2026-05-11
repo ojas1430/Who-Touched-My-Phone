@@ -13,13 +13,17 @@ import androidx.compose.ui.unit.sp
 import com.ojasx.whotouchedmyphone.R
 
 @Composable
-fun ThisWeekCard() {
+fun ThisWeekCard(
+    count: Int
+) {
+
     GlassCard {
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(110.dp),
+
             verticalArrangement = Arrangement.Center
         ) {
 
@@ -29,19 +33,23 @@ fun ThisWeekCard() {
                 fontSize = 14.sp
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(
-                    text = "5",
+                    text = count.toString(),
                     color = Color.White,
                     fontSize = 26.sp
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
 
                 Image(
                     painter = painterResource(id = R.drawable.graph),

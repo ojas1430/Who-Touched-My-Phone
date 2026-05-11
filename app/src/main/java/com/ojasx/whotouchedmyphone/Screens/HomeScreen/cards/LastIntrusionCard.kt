@@ -13,19 +13,23 @@ import androidx.compose.ui.unit.sp
 import com.ojasx.whotouchedmyphone.R
 
 @Composable
-fun LastIntrusionCard() {
+fun LastIntrusionCard(
+    date: String,
+    time: String
+) {
+
     GlassCard {
 
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(110.dp),
+
             verticalAlignment = Alignment.CenterVertically
         ) {
 
             Column(
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
 
                 Text(
@@ -34,33 +38,37 @@ fun LastIntrusionCard() {
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(
+                    modifier = Modifier.height(8.dp)
+                )
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
 
                     Column {
+
                         Text(
-                            text = "Today",
+                            text = date,
                             color = Color.White,
                             fontSize = 18.sp
                         )
 
                         Text(
-                            text = "10:45 AM",
+                            text = time,
                             color = Color.White.copy(alpha = 0.6f),
                             fontSize = 13.sp
                         )
                     }
 
-                    Spacer(modifier = Modifier.weight(1f))
+                    Spacer(
+                        modifier = Modifier.weight(1f)
+                    )
 
                     Image(
                         painter = painterResource(id = R.drawable.clock),
                         contentDescription = null,
-                        modifier = Modifier
-                            .size(38.dp)
+                        modifier = Modifier.size(38.dp)
                     )
                 }
             }

@@ -8,21 +8,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.ojasx.whotouchedmyphone.R
 
-@Preview
-@Preview
 @Composable
-fun ThisMonthCard() {
+fun ThisMonthCard(
+    count: Int
+) {
+
     GlassCard {
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(110.dp),
+
             verticalArrangement = Arrangement.Center
         ) {
 
@@ -32,19 +33,23 @@ fun ThisMonthCard() {
                 fontSize = 14.sp
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(
+                modifier = Modifier.height(8.dp)
+            )
 
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
 
                 Text(
-                    text = "18",
+                    text = count.toString(),
                     color = Color.White,
                     fontSize = 26.sp
                 )
 
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(
+                    modifier = Modifier.weight(1f)
+                )
 
                 Image(
                     painter = painterResource(id = R.drawable.calendar),
