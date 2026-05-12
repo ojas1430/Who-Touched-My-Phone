@@ -1,6 +1,7 @@
 package com.ojasx.whotouchedmyphone.Screens.Logs
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
@@ -21,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
@@ -350,56 +352,98 @@ fun LogsScreen() {
                 AlertDialog(
 
                     onDismissRequest = {
-
                         showDeleteDialog = false
+                    },
+
+                    containerColor = Color(0xFF151A2E),
+
+                    shape = RoundedCornerShape(24.dp),
+
+                    tonalElevation = 0.dp,
+
+                    title = {
+
+                        Text(
+                            text = "Delete Log",
+                            color = Color.White,
+                            fontSize = 20.sp,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    },
+
+                    text = {
+
+                        Text(
+                            text = "Do you want to delete this intrusion log?",
+                            color = Color.White.copy(alpha = 0.75f),
+                            fontSize = 14.sp,
+                            lineHeight = 20.sp
+                        )
                     },
 
                     confirmButton = {
 
-                        TextButton(
+                        Box(
 
-                            onClick = {
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(
+                                    Brush.horizontalGradient(
+                                        colors = listOf(
+                                            Color(0xFF6C4DFF),
+                                            Color(0xFF8B5CFF)
+                                        )
+                                    )
+                                )
+                                .clickable {
 
-                                scope.launch {
+                                    scope.launch {
 
-                                    dao.deleteLogById(selectedLogId)
+                                        dao.deleteLogById(selectedLogId)
+                                    }
+
+                                    showDeleteDialog = false
                                 }
+                                .padding(horizontal = 22.dp, vertical = 10.dp),
 
-                                showDeleteDialog = false
-                            }
+                            contentAlignment = Alignment.Center
                         ) {
 
                             Text(
                                 text = "Delete",
-                                color = Color.Red
+                                color = Color.White,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                     },
 
                     dismissButton = {
 
-                        TextButton(
+                        Box(
 
-                            onClick = {
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(14.dp))
+                                .background(Color.White.copy(alpha = 0.08f))
+                                .border(
+                                    1.dp,
+                                    Color.White.copy(alpha = 0.08f),
+                                    RoundedCornerShape(14.dp)
+                                )
+                                .clickable {
 
-                                showDeleteDialog = false
-                            }
+                                    showDeleteDialog = false
+                                }
+                                .padding(horizontal = 22.dp, vertical = 10.dp),
+
+                            contentAlignment = Alignment.Center
                         ) {
 
-                            Text("Cancel")
+                            Text(
+                                text = "Cancel",
+                                color = Color.White.copy(alpha = 0.85f),
+                                fontWeight = FontWeight.Medium
+                            )
                         }
-                    },
-
-                    title = {
-
-                        Text("Delete Log")
-                    },
-
-                    text = {
-
-                        Text(
-                            "Do you want to delete this intrusion log?"
-                        )
                     }
                 )
             }

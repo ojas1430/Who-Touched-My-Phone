@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
@@ -17,22 +18,17 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Pin
 import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.VolumeUp
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-
 
 @Composable
 fun SettingsScreen(
@@ -56,17 +52,19 @@ fun SettingsScreen(
                     )
                 )
             )
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
             .padding(bottom = 80.dp)
+            .navigationBarsPadding()
     ) {
-
-        Spacer(modifier = Modifier.height(36.dp))
 
         SettingsTopBar()
 
         Spacer(modifier = Modifier.height(20.dp))
 
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
 
             GlassSettingsItem(
                 icon = Icons.Default.Lock,
@@ -78,27 +76,32 @@ fun SettingsScreen(
             )
 
             GlassSettingsItem(
-                icon = Icons.Default.Security,
-                text = "Intruder Detection",
-                hasSwitch = true,
-                onClick = {},
-                switchState = switchState1
+                icon = Icons.Default.Pin,
+                text = "Forgot PIN",
+                hasSwitch = false,
+                onClick = {
+                    navController.navigate("ForgotPinScreen")
+                },
+                switchState = switchState4
             )
+
 
             GlassSettingsItem(
                 icon = Icons.Default.Email,
                 text = "Email Alerts",
                 hasSwitch = true,
                 onClick = {},
-                switchState = switchState2
+                switchState = switchState2,
+                futureUpdateText = "Available soon"
             )
 
             GlassSettingsItem(
-                icon = Icons.Default.VolumeUp,
+                icon = Icons.AutoMirrored.Filled.VolumeUp,
                 text = "Sound on Wrong Attempt",
                 hasSwitch = true,
                 onClick = {},
-                switchState = switchState3
+                switchState = switchState3,
+                futureUpdateText = "Available soon"
             )
 
             GlassSettingsItem(
@@ -106,7 +109,8 @@ fun SettingsScreen(
                 text = "Dark Mode",
                 hasSwitch = true,
                 onClick = {},
-                switchState = switchState4
+                switchState = switchState4,
+                futureUpdateText = "Available soon"
             )
 
             GlassSettingsItem(
@@ -116,7 +120,7 @@ fun SettingsScreen(
                 onClick = {
                     navController.navigate("SecurityQuestionScreen")
                 }
-                )
+            )
 
             GlassSettingsItem(
                 icon = Icons.Default.Info,
@@ -124,9 +128,12 @@ fun SettingsScreen(
                 hasSwitch = false,
                 onClick = {
                     navController.navigate("AboutAppScreen")
-                },
+                }
+            )
 
-                )
+            Spacer(
+                modifier = Modifier.height(40.dp)
+            )
         }
     }
 }

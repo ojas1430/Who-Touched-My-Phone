@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -25,15 +26,25 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsTopBar() {
+
     TopAppBar(
+
+        modifier = Modifier.statusBarsPadding(),
+
         title = {
+
             Text(
+
                 text = "Settings",
+
                 color = Color.White,
+
                 style = MaterialTheme.typography.headlineMedium,
+
                 fontWeight = FontWeight.SemiBold
             )
         },
+
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = Color.Transparent
         )
