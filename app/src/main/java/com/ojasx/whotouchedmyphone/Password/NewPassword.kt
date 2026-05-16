@@ -23,8 +23,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
-import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
+import com.ojasx.whotouchedmyphone.Password.numberpad.NumberPad
+import com.ojasx.whotouchedmyphone.Password.numberpad.PinDots
 import com.ojasx.whotouchedmyphone.R
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 

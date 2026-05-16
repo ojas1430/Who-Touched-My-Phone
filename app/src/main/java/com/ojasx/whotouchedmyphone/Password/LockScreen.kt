@@ -17,13 +17,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.ojasx.whotouchedmyphone.CameraXManager
-import com.ojasx.whotouchedmyphone.Password.NumberPad.NumberPad
-import com.ojasx.whotouchedmyphone.Password.NumberPad.PinDots
+import com.ojasx.whotouchedmyphone.Password.numberpad.NumberPad
+import com.ojasx.whotouchedmyphone.Password.numberpad.PinDots
 import com.ojasx.whotouchedmyphone.R
 import com.ojasx.whotouchedmyphone.ViewModel.PinViewModel
 
 @Composable
-fun LockScreen(
+fun AppLockScreen(
     pinViewModel: PinViewModel,
     cameraXManager: CameraXManager,
     lockedPackageName: String,

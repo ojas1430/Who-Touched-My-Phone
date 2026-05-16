@@ -1,4 +1,4 @@
-package com.ojasx.whotouchedmyphone.Password.NumberPad
+package com.ojasx.whotouchedmyphone.Password.numberpad
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
