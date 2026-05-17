@@ -52,6 +52,7 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
     implementation(libs.androidx.lifecycle.service)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -73,4 +74,11 @@ dependencies {
     implementation("androidx.camera:camera-view:1.4.2")
     implementation("androidx.camera:camera-core:1.4.2")
     implementation("io.coil-kt:coil-compose:2.7.0")
+    // Lifecycle (required for ViewModelStore + ViewModelProvider)
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
+    // Compose (you probably already have these)
+    implementation("androidx.compose.ui:ui:1.7.0")           // or latest
+    implementation("androidx.compose.ui:ui-tooling-preview:1.7.0")
 }
