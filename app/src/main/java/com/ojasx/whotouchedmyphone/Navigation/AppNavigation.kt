@@ -12,7 +12,9 @@ import com.ojasx.whotouchedmyphone.Password.ConfirmPassword
 import com.ojasx.whotouchedmyphone.Password.NewPassword
 import com.ojasx.whotouchedmyphone.Permissions.PermissionSetupScreen
 import com.ojasx.whotouchedmyphone.Permissions.isAccessibilityServiceEnabled
+import com.ojasx.whotouchedmyphone.Permissions.isCameraPermissionGranted
 import com.ojasx.whotouchedmyphone.Permissions.isIgnoringBatteryOptimizations
+import com.ojasx.whotouchedmyphone.Permissions.isMediaPermissionGranted
 import com.ojasx.whotouchedmyphone.Permissions.isOverlayPermissionGranted
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.AppDatabase
 import com.ojasx.whotouchedmyphone.RoomDb.PIN.PinRepository
@@ -45,7 +47,9 @@ fun AppNavigation(isPinSet: Boolean) {
     val allPermissionsGranted =
         isOverlayPermissionGranted(context) &&
                 isIgnoringBatteryOptimizations(context) &&
-                isAccessibilityServiceEnabled(context)
+                isAccessibilityServiceEnabled(context) &&
+                isCameraPermissionGranted(context) &&
+                isMediaPermissionGranted(context)
 
     val startDestination = when {
 

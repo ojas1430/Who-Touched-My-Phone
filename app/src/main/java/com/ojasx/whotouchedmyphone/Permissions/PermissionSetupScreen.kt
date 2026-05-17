@@ -1,12 +1,16 @@
 package com.ojasx.whotouchedmyphone.Permissions
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import kotlinx.coroutines.delay
 
@@ -42,8 +47,28 @@ fun PermissionSetupScreen(
         mutableStateOf(false)
     }
 
+    var cameraEnabled by remember {
+        mutableStateOf(false)
+    }
+
+    var mediaEnabled by remember {
+        mutableStateOf(false)
+    }
+
     var showAccessibilityInfoDialog by remember {
         mutableStateOf(false)
+    }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        cameraEnabled = isGranted
+    }
+
+    val mediaLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted ->
+        mediaEnabled = isGranted
     }
 
     // Auto refresh permissions
@@ -60,6 +85,12 @@ fun PermissionSetupScreen(
             accessibilityEnabled =
                 isAccessibilityServiceEnabled(context)
 
+            cameraEnabled =
+                isCameraPermissionGranted(context)
+
+            mediaEnabled =
+                isMediaPermissionGranted(context)
+
             delay(1000)
         }
     }
@@ -67,7 +98,9 @@ fun PermissionSetupScreen(
     val allGranted =
         overlayEnabled &&
                 batteryEnabled &&
-                accessibilityEnabled
+                accessibilityEnabled &&
+                cameraEnabled &&
+                mediaEnabled
 
     Scaffold(
 
@@ -154,6 +187,44 @@ fun PermissionSetupScreen(
                             context.startActivity(
                                 Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
                             )
+                        }
+                    )
+                }
+
+                item {
+
+                    PermissionCard(
+
+                        title = "Camera Permission",
+
+                        description =
+                        "Required to take a photo of the intruder.",
+
+                        granted = cameraEnabled,
+
+                        onClick = {
+                            cameraLauncher.launch(Manifest.permission.CAMERA)
+                        }
+                    )
+                }
+
+                item {
+
+                    PermissionCard(
+
+                        title = "Storage Permission",
+
+                        description =
+                        "Required to save and show intrusion logs.",
+
+                        granted = mediaEnabled,
+
+                        onClick = {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                mediaLauncher.launch(Manifest.permission.READ_MEDIA_IMAGES)
+                            } else {
+                                mediaLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+                            }
                         }
                     )
                 }
@@ -373,4 +444,25 @@ fun isAccessibilityServiceEnabled(context: Context): Boolean {
     return enabledServices.contains(
         context.packageName
     )
+}
+
+fun isCameraPermissionGranted(context: Context): Boolean {
+    return ContextCompat.checkSelfPermission(
+        context,
+        Manifest.permission.CAMERA
+    ) == PackageManager.PERMISSION_GRANTED
+}
+
+fun isMediaPermissionGranted(context: Context): Boolean {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_MEDIA_IMAGES
+        ) == PackageManager.PERMISSION_GRANTED
+    } else {
+        ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 }
