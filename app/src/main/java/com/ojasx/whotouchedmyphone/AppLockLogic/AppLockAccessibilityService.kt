@@ -77,12 +77,6 @@ class AppLockAccessibilityService : AccessibilityService() {
         val packageName = event.packageName?.toString() ?: return
         val overlay = overlayController ?: return
 
-        if (packageName == this.packageName) {
-            if (mustKeepOverlayUp()) {
-                overlay.ensureShown(lockTargetPackage!!)
-            }
-            return
-        }
 
         if (isTransientSystemPackage(packageName)) {
             if (mustKeepOverlayUp()) {
